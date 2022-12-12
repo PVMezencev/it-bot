@@ -1,0 +1,14 @@
+.idea/
+tmp/
+dist/
+build/
+
+*.spec
+config.yml
+
+it-bot
+it-bot.exe
+
+data/
+docker-compose.yml
+cert/*
