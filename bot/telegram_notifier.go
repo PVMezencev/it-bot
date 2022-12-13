@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"math"
@@ -8,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+
+	rmq "main/rabbitmq-client"
 
 	tgbot "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/sirupsen/logrus"
@@ -284,30 +287,29 @@ func (bot *TBot) sendFile(chat int64, caption, fileName string, file []byte, rep
 	return bot.BotAPI.Send(docConf)
 }
 
-
 // Отправить группу файлов.
 func (bot *TBot) sendMediaGroup(chat int64, text string, files []TAttach) (tgbot.Message, error) {
 	if len(files) == 0 || chat == 0 {
 		return tgbot.Message{}, nil
 	}
-	text =  strings.TrimSpace(text)
+	text = strings.TrimSpace(text)
 
 	mgFiles := make([]interface{}, 0)
 	for _, f := range files {
 		if f.Type == "image" {
 			photoFile := tgbot.FileBytes{
-				Name: f.Name,
+				Name:  f.Name,
 				Bytes: f.Content,
 			}
 			mgFile := tgbot.NewPhoto(chat, photoFile)
-			mgFiles = append(mgFiles ,mgFile)
+			mgFiles = append(mgFiles, mgFile)
 		} else {
 			msgDoc := tgbot.FileBytes{
-				Name: f.Name,
+				Name:  f.Name,
 				Bytes: f.Content,
 			}
 			mgFile := tgbot.NewDocument(chat, msgDoc)
-			mgFiles = append(mgFiles ,mgFile)
+			mgFiles = append(mgFiles, mgFile)
 		}
 	}
 
@@ -340,13 +342,33 @@ func (bot *TBot) SendEvent(evt TEvent) (tgbot.Message, error) {
 }
 
 // Реализация интерфейса io.Writer для получения логов.
-func (td *TBot) Write(p []byte) (n int, err error) {
-	err = td.SendNotify("Log", string(p))
+func (bot *TBot) Write(p []byte) (n int, err error) {
+	err = bot.SendNotify("Log", string(p))
 	return 0, err
 }
 
+// RabbitHandler Плучение события из внешней очереди и трассировка его в свой канал событий.
+func (bot *TBot) RabbitHandler(data []byte) error {
+	var evt TEvent
+	if err := json.Unmarshal(data, &evt); err != nil {
+		return err
+	}
+
+	bot.EventsChan <- evt
+
+	return nil
+}
+
 // Start Запустить Telegram-бота - инициализировать состояние, как синглтон в рамках приложения.
-func (bot *TBot) Start() {
+func (bot *TBot) Start(consumers ...interface{}) {
+
+	for _, cnsm := range consumers {
+		switch v := cnsm.(type) {
+		case *rmq.RabbitClient:
+			// Запустим "слушателя" Раббит, передав ему свой обработчик событий.
+			go v.Consume("events", bot.RabbitHandler)
+		}
+	}
 
 	go func() {
 		for {

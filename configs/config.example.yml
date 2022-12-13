@@ -13,3 +13,9 @@ telegram:
   editor_chats: # Список телеграм-чатов для уведомлений редакторов.
     - ""
     - ""
+# Данные подключения к брокеру сообщений RabbitMQ.
+rabbitmq:
+  username: ""
+  password: ""
+  host: ""
+  port: ""
