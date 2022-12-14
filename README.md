@@ -27,4 +27,5 @@ cp configs/config.example.yml configs/config.yml
 
 #### Дополнительно:
 1. configs/docker-compose.example.yml можно использовать для запуска RabbitMQ в docker.
+2. examples/publisher.py - пример отправки в очередь сообщения на Python.
 
