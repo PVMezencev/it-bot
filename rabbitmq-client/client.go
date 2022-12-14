@@ -161,10 +161,10 @@ func (rcl *RabbitClient) Consume(n string, f func([]byte) error) {
 			case d := <-m:
 
 				if err = f(d.Body); err != nil {
-					_ = d.Ack(false)
+					_ = d.Ack(true)
 					break
 				}
-				_ = d.Ack(true)
+				_ = d.Ack(false)
 			}
 		}
 	}

@@ -322,7 +322,7 @@ func (bot *TBot) sendMediaGroup(chat int64, text string, files []TAttach) (tgbot
 
 func (bot *TBot) SendEvent(evt TEvent) (tgbot.Message, error) {
 
-	if evt.Recipient == 0 {
+	if evt.Recipient <= 0 {
 		return tgbot.Message{}, nil
 	}
 
