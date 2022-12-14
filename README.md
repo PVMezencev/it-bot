@@ -22,7 +22,7 @@ cp configs/config.example.yml configs/config.yml
 - заполните файл конфигурации.
 
 ```bash
-./ti-bot
+./it-bot
 ```
 
 #### Дополнительно:
