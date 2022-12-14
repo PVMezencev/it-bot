@@ -10,12 +10,9 @@ telegram:
   events_chats: # Список телеграм-чатов для уведомлений администрации.
     - ""
     - ""
-  editor_chats: # Список телеграм-чатов для уведомлений редакторов.
-    - ""
-    - ""
 # Данные подключения к брокеру сообщений RabbitMQ.
 rabbitmq:
-  username: ""
-  password: ""
-  host: ""
-  port: ""
+  username: "guest"
+  password: "guest"
+  host: "127.0.0.1"
+  port: "5672"
