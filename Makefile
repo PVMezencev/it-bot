@@ -9,6 +9,9 @@ LOG       = @printf '%s [%s] MAKE: %s\n' "$(HOSTNAME)" "$$(date -u '+%F %T %Z')"
 GO       ?= go
 GOSUBVER != $(GO) version | grep -Eo '\<go[0-9.]+' | head -n1 | cut -d. -f2
 APPROOT = ./
+GOFLAGS  ?=
+GCFLAGS  ?=
+LDFLAGS  ?=
 
 .PHONY: build
 build:
@@ -37,7 +40,8 @@ vet:
 	$(GO) fmt ./rabbitmq-client/*.go
 
 it-bot:
-	$(GO) build -ldflags="$(LDFLAGS)" $(GOFLAGS) -gcflags "$(GCFLAGS)" \
+	CGO_ENABLED=0 \
+	$(GO) build $(GOFLAGS) -ldflags "$(LDFLAGS)" -gcflags "$(GCFLAGS)" \
 		-o $(APPROOT)/"$@" \
 		./"$$(basename "$@").go"
 	-chmod a+x $(APPROOT)/"$@"
