@@ -161,6 +161,7 @@ func (rcl *RabbitClient) Consume(n string, f func([]byte) error) {
 			case d := <-m:
 
 				if err = f(d.Body); err != nil {
+					log.Printf("consume body handler f(): %s", err)
 					_ = d.Ack(true)
 					break
 				}
