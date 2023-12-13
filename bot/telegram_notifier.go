@@ -200,7 +200,7 @@ func (bot *TBot) sendMessage(text string, to int64, replyMarkup interface{}) (tg
 	logrus.Infof(`TBot.sendMessage(to: %d)`, to)
 
 	msg := tgbot.NewMessage(to, text)
-	msg.ParseMode = tgbot.ModeMarkdownV2
+	msg.ParseMode = tgbot.ModeMarkdown
 	msg.ReplyMarkup = replyMarkup
 
 	return bot.BotAPI.Send(msg)
@@ -215,7 +215,7 @@ func (bot *TBot) replyMessage(text string, msg *tgbot.Message, replyMarkup inter
 
 	replyMsg := tgbot.NewMessage(msg.Chat.ID, text)
 	replyMsg.ReplyToMessageID = msg.MessageID
-	replyMsg.ParseMode = tgbot.ModeMarkdownV2
+	replyMsg.ParseMode = tgbot.ModeMarkdown
 	replyMsg.ReplyMarkup = replyMarkup
 
 	return bot.BotAPI.Send(replyMsg)
@@ -232,7 +232,7 @@ func (bot *TBot) sendPhoto(caption string, photoBytes []byte, to int64) (tgbot.M
 	}
 	msg := tgbot.NewPhoto(to, photoFile)
 	msg.Caption = caption
-	msg.ParseMode = tgbot.ModeMarkdownV2
+	msg.ParseMode = tgbot.ModeMarkdown
 
 	return bot.BotAPI.Send(msg)
 }
@@ -250,7 +250,7 @@ func (bot *TBot) replyPhoto(text string, photoBytes []byte, msg *tgbot.Message, 
 	replyMsg := tgbot.NewPhoto(msg.Chat.ID, photoFile)
 	replyMsg.Caption = text
 	replyMsg.ReplyToMessageID = msg.MessageID
-	replyMsg.ParseMode = tgbot.ModeMarkdownV2
+	replyMsg.ParseMode = tgbot.ModeMarkdown
 	replyMsg.ReplyMarkup = replyMarkup
 
 	return bot.BotAPI.Send(replyMsg)
@@ -264,7 +264,7 @@ func (bot *TBot) editMessage(text string, msg *tgbot.Message, replyMarkup *tgbot
 	logrus.Infof(`TBot.editMessage(msg: %d)`, msg.MessageID)
 
 	editMsg := tgbot.NewEditMessageText(msg.Chat.ID, msg.MessageID, text)
-	editMsg.ParseMode = tgbot.ModeMarkdownV2
+	editMsg.ParseMode = tgbot.ModeMarkdown
 	editMsg.ReplyMarkup = replyMarkup
 
 	return bot.BotAPI.Send(editMsg)
@@ -282,7 +282,7 @@ func (bot *TBot) sendFile(chat int64, caption, fileName string, file []byte, rep
 	msgDoc := tgbot.FileBytes{Name: fileName, Bytes: file}
 	docConf := tgbot.NewDocument(chat, msgDoc)
 	docConf.Caption = caption
-	docConf.ParseMode = tgbot.ModeMarkdownV2
+	docConf.ParseMode = tgbot.ModeMarkdown
 	docConf.ReplyMarkup = replyMarkup
 	return bot.BotAPI.Send(docConf)
 }
